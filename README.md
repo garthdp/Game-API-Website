@@ -1,4 +1,4 @@
-# mhw-app
+# Game API Website
 
 A multi-feature Angular browser app with two independent data browsing experiences.
 
