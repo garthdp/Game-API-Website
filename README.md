@@ -39,8 +39,3 @@ npm run build
 
 Output goes to `dist/mhw-app/`.
 
-## Tests
-
-```bash
-npm test
-```
