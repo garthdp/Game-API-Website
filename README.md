@@ -1,59 +1,46 @@
-# MhwApp
+# mhw-app
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A multi-feature Angular browser app with two independent data browsing experiences.
 
-## Development server
+## Features
 
-To start a local development server, run:
+### Pokédex
+- Browse all Pokémon with pagination (10 per page)
+- Click any card to open a detail modal showing sprite, types, base stats, and abilities
+- Data sourced from the [PokéAPI GraphQL endpoint](https://graphql-pokeapi.vercel.app/)
 
-```bash
-ng serve
-```
+### Guild Wars 2 Specializations
+- Select a profession to load its specializations
+- Click a specialization to view its minor traits, major traits, and associated skills
+- Hover any trait or skill card to see a live tooltip with fact data (recharge, range, damage, buffs, combo fields, etc.)
+- Data sourced from the [Guild Wars 2 official API](https://api.guildwars2.com/v2)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Tech stack
 
-## Code scaffolding
+- **Angular 21** — standalone components, signals, SSR
+- **RxJS** — `switchMap`, `forkJoin`, `catchError`, `takeUntilDestroyed`
+- **SASS** — scoped per-component styles
+- **Vitest** — unit testing
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Getting started
 
 ```bash
-ng build
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Then open [http://localhost:4200](http://localhost:4200).
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Build
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+Output goes to `dist/mhw-app/`.
 
-For end-to-end (e2e) testing, run:
+## Tests
 
 ```bash
-ng e2e
+npm test
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
