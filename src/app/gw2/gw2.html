@@ -1,0 +1,186 @@
+<div class="page">
+  <div class="header">
+    <h1>Guild Wars 2</h1>
+    <p class="subtitle">Specializations</p>
+  </div>
+
+  <div class="controls">
+    <select #professionSelect
+            aria-label="Select a profession"
+            (change)="onProfessionChange(professionSelect.value)">
+      <option value="">Select a profession</option>
+      @for (prof of professions; track prof.id) {
+        <option value="{{ prof.name }}">{{ prof.name }}</option>
+      }
+    </select>
+  </div>
+
+  @if (isLoading()) {
+    <div class="gw2-status" aria-live="polite">
+      <p>Loading specializations...</p>
+    </div>
+  } @else if (error()) {
+    <div class="gw2-status gw2-error" role="alert">
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (!professionSelect.value) {
+    <div class="gw2-status gw2-empty">
+      <p>Select a profession to view specializations.</p>
+    </div>
+  } @else {
+    <div class="spec-grid">
+      @for (spec of specialisations(); track spec.id) {
+        <div class="spec-card"
+             [class.elite]="spec.elite"
+             role="button"
+             tabindex="0"
+             [attr.aria-label]="spec.name + (spec.elite ? ' (Elite Specialization)' : '')"
+             (click)="selectSpec(spec)"
+             (keydown.enter)="selectSpec(spec)"
+             (keydown.space)="$event.preventDefault(); selectSpec(spec)">
+          <div class="spec-banner">
+            <img class="banner-img" [src]="spec.background" [alt]="spec.name + ' background'" />
+            @if (spec.elite) {
+              <span class="elite-badge">Elite</span>
+            }
+          </div>
+          <div class="spec-body">
+            <img class="spec-icon" [src]="spec.icon" [alt]="spec.name + ' icon'" />
+            <h3>{{ spec.name }}</h3>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (selectedSpec()) {
+  <div class="backdrop"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="spec-modal-title"
+       (click)="closeSpec()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeSpec()" aria-label="Close specialization details">✕</button>
+
+      <div class="modal-banner">
+        <img class="banner-img" [src]="selectedSpec()!.background" [alt]="selectedSpec()!.name + ' background'" />
+        <div class="modal-banner-overlay">
+          <img class="modal-icon" [src]="selectedSpec()!.icon" [alt]="selectedSpec()!.name + ' icon'" />
+          <div class="modal-title">
+            <h2 id="spec-modal-title">{{ selectedSpec()!.name }}</h2>
+            <span class="modal-profession">{{ selectedSpec()!.profession }}</span>
+          </div>
+          @if (selectedSpec()!.elite) {
+            <span class="elite-badge">Elite</span>
+          }
+        </div>
+      </div>
+
+      <div class="modal-body">
+        @if (selectedSpecSkills().length) {
+          <div class="trait-section">
+            <button class="trait-section-title"
+                    [attr.aria-expanded]="skillsOpen()"
+                    aria-controls="skills-section"
+                    (click)="skillsOpen.set(!skillsOpen())">
+              <span>Skills</span>
+              <span class="chevron" [class.open]="skillsOpen()">›</span>
+            </button>
+            @if (skillsOpen()) {
+              <div class="trait-list" id="skills-section">
+                @for (skill of selectedSpecSkills(); track skill.id) {
+                  <div class="trait-card"
+                       (mouseenter)="onItemHover($event, skill.name, skill.facts)"
+                       (mousemove)="onItemMove($event)"
+                       (mouseleave)="onItemLeave()">
+                    <img class="trait-icon" [src]="skill.icon" [alt]="skill.name + ' icon'" />
+                    <div class="trait-info">
+                      <span class="trait-name">{{ skill.name }}</span>
+                      <span class="trait-desc">{{ skill.description }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (selectedSpec()!.minor_traits.length) {
+          <div class="trait-section">
+            <button class="trait-section-title"
+                    [attr.aria-expanded]="minorOpen()"
+                    aria-controls="minor-traits-section"
+                    (click)="minorOpen.set(!minorOpen())">
+              <span>Minor Traits</span>
+              <span class="chevron" [class.open]="minorOpen()">›</span>
+            </button>
+            @if (minorOpen()) {
+              <div class="trait-list" id="minor-traits-section">
+                @for (trait of selectedSpec()!.minor_traits; track trait.id) {
+                  <div class="trait-card"
+                       (mouseenter)="onItemHover($event, trait.name, trait.facts)"
+                       (mousemove)="onItemMove($event)"
+                       (mouseleave)="onItemLeave()">
+                    <img class="trait-icon" [src]="trait.icon" [alt]="trait.name + ' icon'" />
+                    <div class="trait-info">
+                      <span class="trait-name">{{ trait.name }}</span>
+                      <span class="trait-desc">{{ trait.description }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (selectedSpec()!.major_traits.length) {
+          <div class="trait-section">
+            <button class="trait-section-title"
+                    [attr.aria-expanded]="majorOpen()"
+                    aria-controls="major-traits-section"
+                    (click)="majorOpen.set(!majorOpen())">
+              <span>Major Traits</span>
+              <span class="chevron" [class.open]="majorOpen()">›</span>
+            </button>
+            @if (majorOpen()) {
+              <div class="trait-list" id="major-traits-section">
+                @for (trait of selectedSpec()!.major_traits; track trait.id) {
+                  <div class="trait-card"
+                       (mouseenter)="onItemHover($event, trait.name, trait.facts)"
+                       (mousemove)="onItemMove($event)"
+                       (mouseleave)="onItemLeave()">
+                    <img class="trait-icon" [src]="trait.icon" [alt]="trait.name + ' icon'" />
+                    <div class="trait-info">
+                      <span class="trait-name">{{ trait.name }}</span>
+                      <span class="trait-desc">{{ trait.description }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+@if (hoveredItem()) {
+  <div class="skill-tooltip"
+       [style.left.px]="tooltipPos().x"
+       [style.top.px]="tooltipPos().y">
+    <div class="tooltip-name">{{ hoveredItem()!.name }}</div>
+    @for (fact of hoveredItem()!.facts; track $index) {
+      <div class="tooltip-fact">
+        @if (fact.icon) {
+          <img class="tooltip-fact-icon" [src]="fact.icon" [alt]="fact.text ?? ''" />
+        }
+        <span class="tooltip-fact-label">{{ fact.text }}</span>
+        @if (getFactValue(fact)) {
+          <span class="tooltip-fact-value">{{ getFactValue(fact) }}</span>
+        }
+      </div>
+    }
+  </div>
+}
