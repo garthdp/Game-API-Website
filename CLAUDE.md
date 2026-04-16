@@ -14,6 +14,15 @@ npx ng build --configuration development   # dev build (faster, no optimisation)
 
 There is no lint script configured. TypeScript strict mode is on (`strict`, `strictTemplates`, `noImplicitReturns`), so `npx ng build` acts as the type-check step.
 
+## Git workflow
+
+After completing any meaningful unit of work (a feature, a fix, a refactor), commit and push to GitHub immediately. Do not batch up multiple unrelated changes into one commit.
+
+- Use [Conventional Commits](https://www.conventionalcommits.org/) prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
+- Keep commit messages specific — describe *what changed and why*, not just "update files"
+- Always `git push` after committing so work is never only local
+- Remote: `https://github.com/garthdp/Game-API-Website.git`
+
 ## Architecture
 
 ### Routing
