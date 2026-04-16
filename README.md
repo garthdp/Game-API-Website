@@ -37,5 +37,5 @@ Then open [http://localhost:4200](http://localhost:4200).
 npm run build
 ```
 
-Output goes to `dist/mhw-app/`.
+Output goes to `dist/game-api-website/`.
 
