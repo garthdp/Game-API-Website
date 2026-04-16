@@ -1,0 +1,264 @@
+.page
+  max-width: 1200px
+  margin: 0 auto
+  padding: 2rem
+  font-family: sans-serif
+
+  h1
+    text-align: center
+    font-size: 2rem
+    margin-bottom: 2rem
+    text-transform: capitalize
+
+.grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))
+  gap: 1.25rem
+
+.loading
+  text-align: center
+  color: #666
+  padding: 2rem 0
+
+.error
+  text-align: center
+  color: #c53030
+  background: #fff5f5
+  border-radius: 8px
+  padding: 1.25rem
+  margin-bottom: 1rem
+
+.card
+  background: #fff
+  border-radius: 12px
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1)
+  padding: 1rem
+  display: flex
+  flex-direction: column
+  align-items: center
+  text-align: center
+  cursor: pointer
+  transition: transform 0.15s
+
+  &:hover
+    transform: translateY(-4px)
+
+  img
+    width: 96px
+    height: 96px
+    image-rendering: pixelated
+
+  h3
+    text-transform: capitalize
+    margin: 0.5rem 0 0.4rem
+    font-size: 1rem
+
+.types
+  display: flex
+  gap: 0.4rem
+  flex-wrap: wrap
+  justify-content: center
+  margin-bottom: 0.75rem
+
+.type
+  padding: 0.2rem 0.6rem
+  border-radius: 999px
+  font-size: 0.7rem
+  font-weight: 600
+  color: #fff
+  text-transform: capitalize
+  background: #aaa
+
+  &.fire
+    background: #f08030
+  &.water
+    background: #6890f0
+  &.grass
+    background: #78c850
+  &.electric
+    background: #f8d030
+    color: #333
+  &.psychic
+    background: #f85888
+  &.ice
+    background: #98d8d8
+    color: #333
+  &.dragon
+    background: #7038f8
+  &.dark
+    background: #705848
+  &.fairy
+    background: #ee99ac
+    color: #333
+  &.normal
+    background: #a8a878
+  &.fighting
+    background: #c03028
+  &.flying
+    background: #a890f0
+  &.poison
+    background: #a040a0
+  &.ground
+    background: #e0c068
+    color: #333
+  &.rock
+    background: #b8a038
+  &.bug
+    background: #a8b820
+    color: #333
+  &.ghost
+    background: #705898
+  &.steel
+    background: #b8b8d0
+    color: #333
+
+.stats
+  display: flex
+  gap: 0.75rem
+  font-size: 0.75rem
+  color: #666
+
+.backdrop
+  position: fixed
+  inset: 0
+  background: rgba(0,0,0,0.5)
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 100
+
+.modal
+  background: #fff
+  border-radius: 16px
+  padding: 2rem
+  width: 90%
+  max-width: 420px
+  max-height: 90vh
+  overflow-y: auto
+  position: relative
+  display: flex
+  flex-direction: column
+  align-items: center
+  text-align: center
+  gap: 0.75rem
+
+  img
+    width: 128px
+    height: 128px
+    image-rendering: pixelated
+
+  h2
+    text-transform: capitalize
+    font-size: 1.5rem
+
+.close
+  position: absolute
+  top: 0.75rem
+  right: 0.75rem
+  background: none
+  border: none
+  font-size: 1.1rem
+  cursor: pointer
+  color: #888
+  line-height: 1
+
+  &:hover
+    color: #333
+
+.modal-stats
+  display: flex
+  gap: 1.5rem
+
+.modal-stat
+  display: flex
+  flex-direction: column
+  align-items: center
+  font-size: 0.85rem
+
+  .label
+    font-size: 0.7rem
+    color: #999
+    text-transform: uppercase
+    letter-spacing: 0.05em
+
+.modal-section
+  width: 100%
+  text-align: left
+
+  h4
+    font-size: 0.8rem
+    text-transform: uppercase
+    letter-spacing: 0.05em
+    color: #999
+    margin-bottom: 0.5rem
+
+.ability-list
+  display: flex
+  flex-wrap: wrap
+  gap: 0.4rem
+
+.ability
+  background: #f0f0f0
+  border-radius: 999px
+  padding: 0.2rem 0.6rem
+  font-size: 0.75rem
+  text-transform: capitalize
+
+.stat-row
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  margin-bottom: 0.35rem
+
+.stat-name
+  width: 120px
+  font-size: 0.75rem
+  text-transform: capitalize
+  color: #555
+
+.stat-bar-bg
+  flex: 1
+  background: #eee
+  border-radius: 999px
+  height: 6px
+  overflow: hidden
+
+.stat-bar
+  height: 100%
+  background: #6890f0
+  border-radius: 999px
+
+.stat-val
+  width: 28px
+  font-size: 0.75rem
+  text-align: right
+  color: #333
+
+.pagination
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 1rem
+
+  span
+    font-size: 0.9rem
+    color: #666
+
+  button
+    background: #6890f0
+    color: #fff
+    border: none
+    border-radius: 999px
+    padding: 0.5rem 1.25rem
+    font-size: 0.85rem
+    font-weight: 600
+    cursor: pointer
+    transition: background 0.15s, transform 0.1s
+
+    &:hover:not(:disabled)
+      background: #4a6fd4
+      transform: translateY(-1px)
+
+    &:disabled
+      background: #ccc
+      cursor: default
