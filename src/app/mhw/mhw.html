@@ -1,0 +1,284 @@
+<div class="page">
+  <div class="header">
+    <h1>Monster Hunter World</h1>
+    <p class="subtitle">Database</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab" [class.active]="category() === 'weapons'" (click)="setCategory('weapons')">Weapons</button>
+    <button class="tab" [class.active]="category() === 'monsters'" (click)="setCategory('monsters')">Monsters</button>
+    <button class="tab" [class.active]="category() === 'armor'" (click)="setCategory('armor')">Armor</button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="mhw-status" aria-live="polite"><p>Loading...</p></div>
+  } @else if (error()) {
+    <div class="mhw-status mhw-error" role="alert"><p>{{ error() }}</p></div>
+  } @else {
+    <div class="search-bar">
+      <input type="search"
+             [placeholder]="'Search ' + category() + '...'"
+             [value]="searchQuery()"
+             (input)="searchQuery.set($any($event.target).value)"
+             aria-label="Search" />
+    </div>
+
+    @if (category() === 'weapons') {
+      <div class="item-grid">
+        @for (weapon of filteredWeapons(); track weapon.id) {
+          <div class="item-card"
+               role="button" tabindex="0"
+               [attr.aria-label]="weapon.name"
+               (click)="selectWeapon(weapon)"
+               (keydown.enter)="selectWeapon(weapon)"
+               (keydown.space)="$event.preventDefault(); selectWeapon(weapon)">
+            @if (weapon.assets?.icon) {
+              <img class="item-icon" [src]="weapon.assets!.icon" [alt]="weapon.name + ' icon'" />
+            } @else {
+              <div class="item-icon-placeholder">⚔</div>
+            }
+            <div class="item-info">
+              <span class="item-name">{{ weapon.name }}</span>
+              <span class="item-type">{{ weapon.type }}</span>
+              <div class="item-stats">
+                <span class="stat-chip">ATK {{ weapon.attack.display }}</span>
+                @if (weapon.elemental) {
+                  <span class="stat-chip" [style.color]="elementColor(weapon.elemental.type)">
+                    {{ capitalize(weapon.elemental.type) }} {{ weapon.elemental.damage }}
+                  </span>
+                }
+              </div>
+            </div>
+            <span class="rarity-stars">{{ rarityStars(weapon.rarity) }}</span>
+          </div>
+        }
+        @if (filteredWeapons().length === 0) {
+          <p class="no-results">No weapons found.</p>
+        }
+      </div>
+    }
+
+    @if (category() === 'monsters') {
+      <div class="item-grid">
+        @for (monster of filteredMonsters(); track monster.id) {
+          <div class="item-card"
+               role="button" tabindex="0"
+               [attr.aria-label]="monster.name"
+               (click)="selectMonster(monster)"
+               (keydown.enter)="selectMonster(monster)"
+               (keydown.space)="$event.preventDefault(); selectMonster(monster)">
+            <div class="item-icon-placeholder monster-glyph">{{ monster.type === 'large' ? '🦕' : '🦎' }}</div>
+            <div class="item-info">
+              <span class="item-name">{{ monster.name }}</span>
+              <span class="item-type">{{ capitalize(monster.species) }}</span>
+              <div class="item-stats">
+                @for (w of monster.weaknesses.slice(0, 3); track w.element) {
+                  <span class="stat-chip" [style.color]="elementColor(w.element)">
+                    {{ capitalize(w.element) }}{{ w.stars >= 3 ? ' ★★★' : w.stars === 2 ? ' ★★' : ' ★' }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+        @if (filteredMonsters().length === 0) {
+          <p class="no-results">No monsters found.</p>
+        }
+      </div>
+    }
+
+    @if (category() === 'armor') {
+      <div class="item-grid">
+        @for (armor of filteredArmors(); track armor.id) {
+          <div class="item-card"
+               role="button" tabindex="0"
+               [attr.aria-label]="armor.name"
+               (click)="selectArmor(armor)"
+               (keydown.enter)="selectArmor(armor)"
+               (keydown.space)="$event.preventDefault(); selectArmor(armor)">
+            <div class="item-icon-placeholder">🛡</div>
+            <div class="item-info">
+              <span class="item-name">{{ armor.name }}</span>
+              <span class="item-type">{{ capitalize(armor.rank) }} Rank</span>
+              <div class="item-stats">
+                <span class="stat-chip">DEF {{ armor.defense.base }}</span>
+              </div>
+            </div>
+            <span class="rarity-stars">{{ rarityStars(armor.rarity) }}</span>
+          </div>
+        }
+        @if (filteredArmors().length === 0) {
+          <p class="no-results">No armor found.</p>
+        }
+      </div>
+    }
+  }
+</div>
+
+<!-- Weapon modal -->
+@if (selectedWeapon()) {
+  <div class="backdrop"
+       role="dialog" aria-modal="true"
+       [attr.aria-label]="selectedWeapon()!.name"
+       (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeModal()" aria-label="Close">✕</button>
+
+      <div class="modal-header">
+        @if (selectedWeapon()!.assets?.image) {
+          <img class="modal-img" [src]="selectedWeapon()!.assets!.image" [alt]="selectedWeapon()!.name" />
+        } @else if (selectedWeapon()!.assets?.icon) {
+          <img class="modal-img modal-img-icon" [src]="selectedWeapon()!.assets!.icon" [alt]="selectedWeapon()!.name" />
+        } @else {
+          <div class="modal-img-placeholder">⚔</div>
+        }
+        <div class="modal-title-block">
+          <h2>{{ selectedWeapon()!.name }}</h2>
+          <span class="modal-meta">{{ selectedWeapon()!.type }}</span>
+          <span class="rarity-stars modal-rarity">{{ rarityStars(selectedWeapon()!.rarity) }}</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-row">
+          <span class="detail-label">Attack</span>
+          <span class="detail-value">{{ selectedWeapon()!.attack.display }} (raw {{ selectedWeapon()!.attack.raw }})</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Damage Type</span>
+          <span class="detail-value">{{ capitalize(selectedWeapon()!.damageType) }}</span>
+        </div>
+        @if (selectedWeapon()!.elemental) {
+          <div class="detail-row">
+            <span class="detail-label">Element</span>
+            <span class="detail-value" [style.color]="elementColor(selectedWeapon()!.elemental!.type)">
+              {{ capitalize(selectedWeapon()!.elemental!.type) }} {{ selectedWeapon()!.elemental!.damage }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Monster modal -->
+@if (selectedMonster()) {
+  <div class="backdrop"
+       role="dialog" aria-modal="true"
+       [attr.aria-label]="selectedMonster()!.name"
+       (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeModal()" aria-label="Close">✕</button>
+
+      <div class="modal-header">
+        <div class="modal-img-placeholder monster-glyph-lg">{{ selectedMonster()!.type === 'large' ? '🦕' : '🦎' }}</div>
+        <div class="modal-title-block">
+          <h2>{{ selectedMonster()!.name }}</h2>
+          <span class="modal-meta">{{ capitalize(selectedMonster()!.species) }}</span>
+          <span class="modal-meta">{{ capitalize(selectedMonster()!.type) }} monster</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        @if (selectedMonster()!.description) {
+          <p class="monster-desc">{{ selectedMonster()!.description }}</p>
+        }
+
+        @if (selectedMonster()!.elements.length) {
+          <div class="detail-row">
+            <span class="detail-label">Elements</span>
+            <div class="detail-chips">
+              @for (el of selectedMonster()!.elements; track el) {
+                <span class="stat-chip" [style.color]="elementColor(el)">{{ capitalize(el) }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (selectedMonster()!.weaknesses.length) {
+          <div class="detail-section">
+            <span class="detail-label">Weaknesses</span>
+            <div class="weakness-list">
+              @for (w of selectedMonster()!.weaknesses; track w.element) {
+                <div class="weakness-row">
+                  <span class="weakness-element" [style.color]="elementColor(w.element)">{{ capitalize(w.element) }}</span>
+                  <span class="weakness-stars">{{ w.stars >= 3 ? '★★★' : w.stars === 2 ? '★★' : '★' }}</span>
+                  @if (w.condition) {
+                    <span class="weakness-condition">{{ w.condition }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (selectedMonster()!.resistances.length) {
+          <div class="detail-section">
+            <span class="detail-label">Resistances</span>
+            <div class="detail-chips">
+              @for (r of selectedMonster()!.resistances; track r.element) {
+                <span class="stat-chip" [style.color]="elementColor(r.element)">{{ capitalize(r.element) }}</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Armor modal -->
+@if (selectedArmor()) {
+  <div class="backdrop"
+       role="dialog" aria-modal="true"
+       [attr.aria-label]="selectedArmor()!.name"
+       (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeModal()" aria-label="Close">✕</button>
+
+      <div class="modal-header">
+        <div class="modal-img-placeholder">🛡</div>
+        <div class="modal-title-block">
+          <h2>{{ selectedArmor()!.name }}</h2>
+          <span class="modal-meta">{{ capitalize(selectedArmor()!.rank) }} Rank</span>
+          <span class="rarity-stars modal-rarity">{{ rarityStars(selectedArmor()!.rarity) }}</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-row">
+          <span class="detail-label">Defense</span>
+          <span class="detail-value">
+            {{ selectedArmor()!.defense.base }} base / {{ selectedArmor()!.defense.max }} max / {{ selectedArmor()!.defense.augmented }} augmented
+          </span>
+        </div>
+
+        <div class="detail-section">
+          <span class="detail-label">Resistances</span>
+          <div class="resist-grid">
+            <div class="resist-row">
+              <span class="resist-label" [style.color]="elementColor('fire')">Fire</span>
+              <span class="resist-val" [style.color]="resistanceColor(selectedArmor()!.resistances.fire)">{{ selectedArmor()!.resistances.fire }}</span>
+            </div>
+            <div class="resist-row">
+              <span class="resist-label" [style.color]="elementColor('water')">Water</span>
+              <span class="resist-val" [style.color]="resistanceColor(selectedArmor()!.resistances.water)">{{ selectedArmor()!.resistances.water }}</span>
+            </div>
+            <div class="resist-row">
+              <span class="resist-label" [style.color]="elementColor('ice')">Ice</span>
+              <span class="resist-val" [style.color]="resistanceColor(selectedArmor()!.resistances.ice)">{{ selectedArmor()!.resistances.ice }}</span>
+            </div>
+            <div class="resist-row">
+              <span class="resist-label" [style.color]="elementColor('thunder')">Thunder</span>
+              <span class="resist-val" [style.color]="resistanceColor(selectedArmor()!.resistances.thunder)">{{ selectedArmor()!.resistances.thunder }}</span>
+            </div>
+            <div class="resist-row">
+              <span class="resist-label" [style.color]="elementColor('dragon')">Dragon</span>
+              <span class="resist-val" [style.color]="resistanceColor(selectedArmor()!.resistances.dragon)">{{ selectedArmor()!.resistances.dragon }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
