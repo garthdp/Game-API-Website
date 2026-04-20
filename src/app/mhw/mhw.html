@@ -19,13 +19,13 @@
       <input type="search"
              [placeholder]="'Search ' + category() + '...'"
              [value]="searchQuery()"
-             (input)="searchQuery.set($any($event.target).value)"
+             (input)="onSearch($any($event.target).value)"
              aria-label="Search" />
     </div>
 
     @if (category() === 'weapons') {
       <div class="item-grid">
-        @for (weapon of filteredWeapons(); track weapon.id) {
+        @for (weapon of pagedWeapons(); track weapon.id) {
           <div class="item-card"
                role="button" tabindex="0"
                [attr.aria-label]="weapon.name"
@@ -60,7 +60,7 @@
 
     @if (category() === 'monsters') {
       <div class="item-grid">
-        @for (monster of filteredMonsters(); track monster.id) {
+        @for (monster of pagedMonsters(); track monster.id) {
           <div class="item-card"
                role="button" tabindex="0"
                [attr.aria-label]="monster.name"
@@ -89,14 +89,14 @@
 
     @if (category() === 'armor') {
       <div class="item-grid">
-        @for (armor of filteredArmors(); track armor.id) {
+        @for (armor of pagedArmors(); track armor.id) {
           <div class="item-card"
                role="button" tabindex="0"
                [attr.aria-label]="armor.name"
                (click)="selectArmor(armor)"
                (keydown.enter)="selectArmor(armor)"
                (keydown.space)="$event.preventDefault(); selectArmor(armor)">
-            <div class="item-icon-placeholder">🛡</div>
+            <img class="item-icon-placeholder" [src]="armor?.assets?.imageMale" [alt]="armor.name + ' icon'" />
             <div class="item-info">
               <span class="item-name">{{ armor.name }}</span>
               <span class="item-type">{{ capitalize(armor.rank) }} Rank</span>
@@ -110,6 +110,14 @@
         @if (filteredArmors().length === 0) {
           <p class="no-results">No armor found.</p>
         }
+      </div>
+    }
+
+    @if (totalPages() > 1) {
+      <div class="pagination" aria-label="Pagination">
+        <button class="page-btn" (click)="changePage(-1)" [disabled]="page() === 0" aria-label="Previous page">‹</button>
+        <span class="page-info">{{ currentPage() }} / {{ totalPages() }}</span>
+        <button class="page-btn" (click)="changePage(1)" [disabled]="currentPage() === totalPages()" aria-label="Next page">›</button>
       </div>
     }
   }

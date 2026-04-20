@@ -17,8 +17,11 @@ export class Mhw {
   private mhwApi = inject(MhwApi);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly PAGE_SIZE = 100;
+
   protected category = signal<Category>('monsters');
   protected searchQuery = signal('');
+  protected page = signal(0);
   protected weapons = signal<Weapon[]>([]);
   protected monsters = signal<Monster[]>([]);
   protected armors = signal<Armor[]>([]);
@@ -43,6 +46,31 @@ export class Mhw {
     return q ? this.armors().filter(a => a.name.toLowerCase().includes(q)) : this.armors();
   });
 
+  protected pagedWeapons = computed(() => {
+    const start = this.page() * this.PAGE_SIZE;
+    return this.filteredWeapons().slice(start, start + this.PAGE_SIZE);
+  });
+
+  protected pagedMonsters = computed(() => {
+    const start = this.page() * this.PAGE_SIZE;
+    return this.filteredMonsters().slice(start, start + this.PAGE_SIZE);
+  });
+
+  protected pagedArmors = computed(() => {
+    const start = this.page() * this.PAGE_SIZE;
+    return this.filteredArmors().slice(start, start + this.PAGE_SIZE);
+  });
+
+  protected totalPages = computed(() => {
+    const cat = this.category();
+    const total = cat === 'weapons' ? this.filteredWeapons().length
+      : cat === 'monsters' ? this.filteredMonsters().length
+      : this.filteredArmors().length;
+    return Math.ceil(total / this.PAGE_SIZE);
+  });
+
+  protected currentPage = computed(() => this.page() + 1);
+
   constructor() {
     forkJoin({
       weapons: this.mhwApi.getWeapons(),
@@ -66,6 +94,17 @@ export class Mhw {
   setCategory(cat: Category) {
     this.category.set(cat);
     this.searchQuery.set('');
+    this.page.set(0);
+  }
+
+  onSearch(q: string) {
+    this.searchQuery.set(q);
+    this.page.set(0);
+  }
+
+  changePage(delta: number) {
+    const next = this.page() + delta;
+    if (next >= 0 && next < this.totalPages()) this.page.set(next);
   }
 
   selectWeapon(w: Weapon) { this.selectedWeapon.set(w); }

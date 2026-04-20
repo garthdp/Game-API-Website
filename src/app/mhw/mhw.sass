@@ -183,6 +183,42 @@ $gold: #c8a040
   color: $text-muted
   padding: 3rem
 
+.pagination
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 1rem
+  margin-top: 2rem
+
+.page-btn
+  background: $surface
+  color: $text
+  border: 1px solid #2e2620
+  border-radius: 6px
+  width: 36px
+  height: 36px
+  font-size: 1.3rem
+  line-height: 1
+  cursor: pointer
+  display: flex
+  align-items: center
+  justify-content: center
+  transition: border-color 0.15s, color 0.15s
+
+  &:hover:not(:disabled)
+    border-color: $red
+    color: $red-light
+
+  &:disabled
+    opacity: 0.35
+    cursor: default
+
+.page-info
+  font-size: 0.85rem
+  color: $text-muted
+  min-width: 60px
+  text-align: center
+
 // Modal
 .backdrop
   position: fixed
