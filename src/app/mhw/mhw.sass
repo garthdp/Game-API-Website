@@ -177,6 +177,73 @@ $gold: #c8a040
   flex-shrink: 0
   align-self: flex-start
 
+// Armor card variant
+.armor-grid
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))
+
+.armor-card
+  flex-direction: column
+  align-items: stretch
+  padding: 0
+  overflow: hidden
+
+.armor-banner
+  display: flex
+  height: 180px
+  overflow: hidden
+  background: #100d0a
+
+.armor-img
+  flex: 1
+  min-width: 0
+  height: 100%
+  object-fit: cover
+  object-position: top center
+
+.armor-banner-placeholder
+  flex: 1
+  display: flex
+  align-items: center
+  justify-content: center
+  font-size: 3rem
+
+.armor-card-info
+  padding: 0.65rem 0.85rem 0.75rem
+  display: flex
+  flex-direction: column
+  gap: 0.2rem
+
+  .item-stats
+    margin-top: 0.25rem
+    align-items: center
+
+// Armor modal renders
+.armor-renders
+  display: flex
+  justify-content: center
+  gap: 2rem
+  padding: 1.25rem 1.5rem
+  background: #100d0a
+  border-bottom: 1px solid #2e2620
+
+.armor-render
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 0.4rem
+
+  img
+    height: 200px
+    width: auto
+    object-fit: contain
+    border-radius: 4px
+
+.render-label
+  font-size: 0.65rem
+  text-transform: uppercase
+  letter-spacing: 0.12em
+  color: $text-muted
+
 .no-results
   grid-column: 1 / -1
   text-align: center

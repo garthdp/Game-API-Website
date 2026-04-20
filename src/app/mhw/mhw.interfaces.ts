@@ -36,10 +36,10 @@ export interface Armor {
     dragon: number;
   };
   slots: number[];
-  assests: {
+  assets?: {
     imageMale: string;
     imageFemale: string;
-  }
+  };
 }
 
 export interface Monster {

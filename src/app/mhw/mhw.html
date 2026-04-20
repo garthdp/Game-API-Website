@@ -88,23 +88,33 @@
     }
 
     @if (category() === 'armor') {
-      <div class="item-grid">
+      <div class="item-grid armor-grid">
         @for (armor of pagedArmors(); track armor.id) {
-          <div class="item-card"
+          <div class="item-card armor-card"
                role="button" tabindex="0"
                [attr.aria-label]="armor.name"
                (click)="selectArmor(armor)"
                (keydown.enter)="selectArmor(armor)"
                (keydown.space)="$event.preventDefault(); selectArmor(armor)">
-            <img class="item-icon-placeholder" [src]="armor?.assets?.imageMale" [alt]="armor.name + ' icon'" />
-            <div class="item-info">
+            <div class="armor-banner">
+              @if (armor.assets?.imageMale) {
+                <img class="armor-img" [src]="armor.assets!.imageMale" [alt]="armor.name + ' male'" />
+              }
+              @if (armor.assets?.imageFemale) {
+                <img class="armor-img" [src]="armor.assets!.imageFemale" [alt]="armor.name + ' female'" />
+              }
+              @if (!armor.assets?.imageMale) {
+                <div class="armor-banner-placeholder">🛡</div>
+              }
+            </div>
+            <div class="armor-card-info">
               <span class="item-name">{{ armor.name }}</span>
               <span class="item-type">{{ capitalize(armor.rank) }} Rank</span>
               <div class="item-stats">
                 <span class="stat-chip">DEF {{ armor.defense.base }}</span>
+                <span class="rarity-stars">{{ rarityStars(armor.rarity) }}</span>
               </div>
             </div>
-            <span class="rarity-stars">{{ rarityStars(armor.rarity) }}</span>
           </div>
         }
         @if (filteredArmors().length === 0) {
@@ -252,6 +262,19 @@
           <span class="rarity-stars modal-rarity">{{ rarityStars(selectedArmor()!.rarity) }}</span>
         </div>
       </div>
+
+      @if (selectedArmor()!.assets?.imageMale) {
+        <div class="armor-renders">
+          <div class="armor-render">
+            <img [src]="selectedArmor()!.assets!.imageMale" [alt]="selectedArmor()!.name + ' male'" />
+            <span class="render-label">Male</span>
+          </div>
+          <div class="armor-render">
+            <img [src]="selectedArmor()!.assets!.imageFemale" [alt]="selectedArmor()!.name + ' female'" />
+            <span class="render-label">Female</span>
+          </div>
+        </div>
+      }
 
       <div class="modal-body">
         <div class="detail-row">
